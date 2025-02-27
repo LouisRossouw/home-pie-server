@@ -1,0 +1,10 @@
+# Local env files
+venv
+.env
+.vscode
+db.sqlite3
+__pycache__
+
+# Misc
+.DS_Store
+*.pem
