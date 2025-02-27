@@ -36,10 +36,8 @@ Home pie is basically a side project, built to monitor/support - my side project
 ### Future Projects for Home Pie:
 
 - Net worth monitor / calculator:
-  todo: save a list of all my assets owned, scrape the web to find the general resale value of each asset class & return data.
-  todo: recharts graph in the electron app + mobile app
+  todo: Save a list of all my assets owned, scrape the web to find the general resale value of each asset class & return data.
+  Recharts graph in the electron app + mobile app
 
 - Crypto:
-  todo: Add a crypto section, connect to Valr API.
-  todo: rebuild my DripDrip project and integrate it into Home Pie, (DripDrip is A automated dollar cost averaging bot).
-  todo: add a section to easily record data for every purchase and sale, mostly for the tax man. some kind of stats would be fun.
+  todo: Add a crypto section, connect to Valr API. Rebuild my DripDrip project and integrate it into Home Pie, (DripDrip is A automated dollar cost averaging bot). Add a section to easily record data for every purchase and sale, mostly for the tax man. some kind of stats would be fun.
