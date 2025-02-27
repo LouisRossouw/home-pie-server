@@ -15,7 +15,7 @@ Home pie is basically a side project, built to monitor/support - my side project
 ### My independent projects that this API supports:
 
 - Time In Progress:
-  Automated social media content generation and upload to social media via API, based on progressbars (or brain rot 🤮),
+  Automated social media content generation and upload via API, based on progressbars (or brain rot 🤮),
   check out the instagram page - https://www.instagram.com/time.in.progress/
   website https://www.timeinprogress.com/
 
@@ -27,11 +27,11 @@ Home pie is basically a side project, built to monitor/support - my side project
 - Quixvert:
   An online file converter SAAS - https://www.quixvert.com/ (will deprecate soon).
 
-- Micro Zombie webGL game:
-  A micro game built for my animation portfolios landing page.
+- Micro Zombie WebGL game:
+  A micro game built for my animation portfolio landing page. - https://www.louisrossouw.com/
 
 - Mr-Ping-Ping:
-  A python simple script that monitors / pings all my independent projects /health and /stats endpoints, records the data for Home Pie.
+  A simple python script that monitors / pings all my independent projects /health and /stats endpoints, records the data for Home Pie.
 
 ### Future Projects for Home Pie:
 
