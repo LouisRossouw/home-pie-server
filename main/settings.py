@@ -11,7 +11,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DEV = True if os.getenv('APP_ENV') == "dev" else False
 DEBUG = True if DEV else False
 
-ALLOWED_HOSTS = ['127.0.0.1', "10.0.0.113"]
+# ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS')
+ALLOWED_HOSTS = ["10.0.0.107", "10.0.0.113", "127.0.0.1"]
 
 
 # Application definition
@@ -24,6 +25,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+
+    # drf-social-oauth2
+    'oauth2_provider',
+    'social_django',
+    'drf_social_oauth2',
+
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +57,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                # drf-social-oauth2
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -120,5 +132,79 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.AdminRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer'
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'drf_social_oauth2.authentication.SocialAuthentication',
+    ),
 
 }
+
+
+AUTHENTICATION_BACKENDS = (
+    # Others auth providers (e.g. Google, OpenId, etc)
+
+    # Google  OAuth2
+    'social_core.backends.google.GoogleOAuth2',
+
+    # Manual login
+    # drf_social_oauth2
+    'drf_social_oauth2.backends.DjangoOAuth2',
+
+    # Manual login
+    # Django
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+# TODO; Not needing yet but nice to have in the future.
+# Google configuration
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv(
+#     'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+#     'https://www.googleapis.com/auth/userinfo.email',
+#     'https://www.googleapis.com/auth/userinfo.profile',
+# ]
+
+
+PROJECT_NAME = "Home-Pie"
+DEV_BASEURL = os.getenv('DJANGO_DEV_BASEURL')
+PROD_BASEURL = os.getenv('DJANGO_PROD_BASEURL')
+SERVER_API_URL = DEV_BASEURL if DEV else PROD_BASEURL
+
+
+AUTH_USER_MODEL = "user.User"
+
+# TELEGRAM
+TELEGRAM_NOTIFICATIONS = True
+
+# Mail Service
+MAIL_DEV = False
+# IF True, send to my sandbox mail for testing - else send to customer mail.
+MAIL_DELIVERY_SANDBOX = False
+MAIL_DELIVERY_SANDBOX_MAIL = os.getenv("SANDBOX_MAIL")
+
+if MAIL_DEV == True:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = os.getenv("NAME_GMAIL_SMTP")
+    EMAIL_HOST_PASSWORD = os.getenv("PASSWORD_GMAIL_SMTP")
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+# just print statements in color or not, should actually change this to logger!
+PRINTOUTS = True if DEV else False
+PRINTOUTS_FRM = 'RED'
+
+
+print("--")
+print("Starting Server with config:")
+print('IS_DEV:', DEV)
+print('PROJECT_NAME:', PROJECT_NAME)
+print("SERVER_URL:", SERVER_API_URL)
+
+print('MAIL_DELIVERY_SANDBOX:', MAIL_DELIVERY_SANDBOX)
+print("--")
