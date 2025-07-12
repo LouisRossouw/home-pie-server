@@ -1,4 +1,4 @@
-# Home Pie Django Server
+# Home Pie Django Server / API
 
 Acts as a data aggregator and API to support my locally running Electron app, mobile app, and automated processes.
 
