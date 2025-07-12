@@ -12,7 +12,7 @@ Home pie is basically a side project, built to monitor/support - my side project
 - This repo will always be in an unfinished state / mess, as there is no clear end goal, it is super low priority.
 - It runs on my local network on a mini pc.
 
-### My independent projects that this API supports:
+### My independent projects that this local API supports:
 
 - Time In Progress:
   Automated social media content generation and upload via API, based on progressbars (or brain rot 🤮),
