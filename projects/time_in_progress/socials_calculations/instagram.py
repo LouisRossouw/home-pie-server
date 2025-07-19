@@ -402,7 +402,7 @@ def get_difference(account, set_range, set_length):
         print("From:", t_date.strftime("%Y-%m-%d %H:%M"),
               "to:", time.strftime("%Y-%m-%d %H:%M"))
 
-        avarage_per_10_min = calculate_average_difference(follower_count)
+        average_per_10_min = calculate_average_difference(follower_count)
 
         print(
             "Range:", set_range,
@@ -412,15 +412,15 @@ def get_difference(account, set_range, set_length):
             int(followers_value), '=',
             followers_difference,
             'Followers', '\nAverage difference per +- 10 min:',
-            avarage_per_10_min,
+            average_per_10_min,
             '\nAverage difference per +- 1 hour:',
-            round(avarage_per_10_min * 6, 2),
+            round(average_per_10_min * 6, 2),
             '\nAverage difference per +- 1 day:',
-            round(avarage_per_10_min * 24, 2),
+            round(average_per_10_min * 24, 2),
             '\nAverage difference per +- 1 week:',
-            round(avarage_per_10_min * (24 * 7), 2),
+            round(average_per_10_min * (24 * 7), 2),
             '\nAverage difference per +- 1 month:',
-            round(avarage_per_10_min * (24 * 30), 2),
+            round(average_per_10_min * (24 * 30), 2),
         )
         print('*')
 
@@ -438,11 +438,11 @@ def get_difference(account, set_range, set_length):
             "post_difference": post_difference,
             "followers_difference": followers_difference,
 
-            "avarage_per_10_min": avarage_per_10_min,
-            "avarage_per_1_hour": round(avarage_per_10_min * 6, 2),
-            "avarage_per_1_day": round(avarage_per_10_min * 24, 2),
-            "avarage_per_1_week": round(avarage_per_10_min * (24 * 7), 2),
-            "avarage_per_1_month": round(avarage_per_10_min * (24 * 30), 2),
+            "average_per_10_min": average_per_10_min,
+            "average_per_1_hour": round(average_per_10_min * 6, 2),
+            "average_per_1_day": round(average_per_10_min * 24, 2),
+            "average_per_1_week": round(average_per_10_min * (24 * 7), 2),
+            "average_per_1_month": round(average_per_10_min * (24 * 30), 2),
         }
 
     return data, clean
