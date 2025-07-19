@@ -29,6 +29,6 @@ urlpatterns = [
 
     # ** Projects
     # - TimeInProgress
-    # path('api/timeinprogress/overview-data', timeinprogress.get_overview_data, name='get-overview-data'),  # nopep8
+    path('api/timeinprogress/overview-data', timeinprogress.overview_data, name='overview-data'),  # nopep8
 
 ]
