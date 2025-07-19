@@ -15,3 +15,25 @@ def decorator_overview_data(view_func):
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view
+
+
+def decorator_start_gengen(view_func):
+    """Custom decorator to combine multiple DRF decorators."""
+    @api_view(['POST'])
+    @permission_classes([IsAuthenticated])
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped_view
+
+
+def decorator_check_genGen_progress(view_func):
+    """Custom decorator to combine multiple DRF decorators."""
+    @api_view(['GET'])
+    @permission_classes([IsAuthenticated])
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped_view
