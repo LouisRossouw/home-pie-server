@@ -32,6 +32,9 @@ INSTALLED_APPS = [
     'drf_social_oauth2',
 
     'user',
+
+    'projects.insta_insights',
+    'projects.time_in_progress',
 ]
 
 MIDDLEWARE = [
