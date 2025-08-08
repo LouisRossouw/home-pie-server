@@ -13,6 +13,7 @@ def start_time():
 def calculate_DB_time(start_time):
     elapsed_time = time.time() - start_time
     print(Fore.YELLOW, 'DB time: ', elapsed_time, Style.RESET_ALL)
+    return elapsed_time
 
 
 def generate_random_code(length=5):
