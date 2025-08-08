@@ -25,23 +25,23 @@ def overview_data(request):
         start_time = utils.start_time()
 
         account = request.GET.get('account') or "time.in.progress"
-        set_range = request.GET.get('range') or "hour"
-        set_length = request.GET.get('interval') or 1
+        range = request.GET.get('range') or "hour"
+        interval = request.GET.get('interval') or 1
 
         insta_data, insta_clean = calculations.get_graph_data(
-            str(account), str(set_range), int(set_length), 'instagram')
+            str(account), str(range), int(interval), 'instagram')
 
         youtube_data, youtube_clean = calculations.get_graph_data(
-            str(account), str(set_range), int(set_length), 'youtube')
+            str(account), str(range), int(interval), 'youtube')
 
         twitter_data, twitter_clean = calculations.get_graph_data(
-            str(account), str(set_range), int(set_length), 'x-twitter')
+            str(account), str(range), int(interval), 'x-twitter')
 
         tiktok_data, tiktok_clean = calculations.get_graph_data(
-            str(account), str(set_range), int(set_length), 'tiktok')
+            str(account), str(range), int(interval), 'tiktok')
 
         bluesky_data, bluesky_clean = calculations.get_graph_data(
-            str(account), str(set_range), int(set_length), 'bluesky')
+            str(account), str(range), int(interval), 'bluesky')
 
         printout(OD)
         elapsed_time = utils.calculate_DB_time(start_time)
