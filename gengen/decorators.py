@@ -4,6 +4,8 @@ from functools import wraps
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
+# TODO; Temp AllowAny
+
 
 def decorator_start_gengen(view_func):
     """Custom decorator to combine multiple DRF decorators."""
@@ -18,7 +20,7 @@ def decorator_start_gengen(view_func):
     return _wrapped_view
 
 
-def decorator_check_genGen_progress(view_func):
+def decorator_check_gengen_progress(view_func):
     """Custom decorator to combine multiple DRF decorators."""
     @api_view(['GET'])
     @permission_classes([AllowAny])

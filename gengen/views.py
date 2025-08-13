@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
-from .decorators import decorator_start_gengen, decorator_check_genGen_progress
+from .decorators import decorator_start_gengen, decorator_check_gengen_progress
 
 import shared.utils.utils as utils
 from shared.utils.printouts.printout_general import printout
@@ -28,7 +28,7 @@ def start_gengen(request):
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@decorator_check_genGen_progress
+@decorator_check_gengen_progress
 def check_progress(request):
     """ Returns the current progress of the time in progress content generation. """
 
