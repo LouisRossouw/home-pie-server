@@ -7,7 +7,9 @@ from django.shortcuts import redirect
 from rest_framework.routers import DefaultRouter
 from user.views import CustomUserCreate, CustomTokenView
 
-from projects.time_in_progress import views as timeinprogress
+from gengen import views as gengen
+from projects.insta_insights import views as instaInsights
+from projects.time_in_progress import views as timeInProgress
 
 router = DefaultRouter()
 
@@ -29,6 +31,17 @@ urlpatterns = [
 
     # ** Projects
     # - TimeInProgress
-    path('api/timeinprogress/overview-data', timeinprogress.overview_data, name='overview-data'),  # nopep8
+    path('api/time-in-progress/overview', timeInProgress.overview),
+
+    # - InstaInsights
+    path('api/insta-insights/overview', instaInsights.overview),
+    path('api/insta-insights/accounts', instaInsights.accounts),
+    path('api/insta-insights/accounts/<str:account_name>', instaInsights.account_detail),  # nopep8
+
+
+    # ** GenGen
+    # - TimeInProgress
+    path('api/gengen/start', gengen.start_gengen),
+    path('api/gengen/check-progress', gengen.check_progress),  # nopep8
 
 ]

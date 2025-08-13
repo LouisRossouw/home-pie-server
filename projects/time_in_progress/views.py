@@ -3,22 +3,19 @@ import datetime
 
 from rest_framework import status
 from rest_framework.response import Response
-from .decorators import decorator_overview_data, decorator_start_gengen, decorator_check_genGen_progress
+from .decorators import decorator_overview
 
 import shared.utils.utils as utils
 from shared.utils.printouts.printout_general import printout
 
-from .generation import gengen
 from .socials_calculations import calculations
 
 F = str(__name__)
 OD = {'file': F, "func": "overview_data"}
-SG = {'file': F, "func": "start_gengen"}
-CGP = {'file': F, "func": "check_genGen_progress"}
 
 
-@decorator_overview_data
-def overview_data(request):
+@decorator_overview
+def overview(request):
     """ Returns current data. """
 
     if request.method == "GET":
@@ -74,34 +71,3 @@ def overview_data(request):
 
         return Response(context, status=status.HTTP_200_OK)
     return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-# ** --- Generate time in progress content.
-@decorator_start_gengen
-def start_gengen(request):
-    """ Starts the content generation process for time in progress. """
-
-    if request.method == "POST":
-        start_time = utils.start_time()
-
-        printout(SG)
-        hasStarted = gengen.run_gengen()
-
-        utils.calculate_DB_time(start_time)
-        return Response({'ok': True, 'hasStarted': hasStarted}, status=status.HTTP_200_OK)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-@decorator_check_genGen_progress
-def check_genGen_progress(request):
-    """ Returns the current progress of the time in progress content generation. """
-
-    if request.method == "GET":
-
-        printout(CGP)
-        progress = gengen.check_gengen()
-
-        return Response({'ok': True, "progress": progress}, status=status.HTTP_200_OK)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
-
-# --- **

@@ -2,6 +2,8 @@ import time
 import json
 import random
 import string
+import datetime
+import calendar
 
 from colorama import Fore, Back, Style, init
 
@@ -35,3 +37,19 @@ def read_json(json_path):
         json_file = json.loads(f.read())
 
     return (json_file)
+
+
+def get_dates():
+    """ Returns a lot of date stuff! """
+
+    return {'date_now':  (str(datetime.datetime.now()).split(' ')[0]),  # 2024-06-22
+            # 00:23:02.199620
+            'date_time': (str(datetime.datetime.now()).split(' ')[1]),
+            'day_num': datetime.datetime.today().day,
+            'day_name': calendar.day_name[datetime.date.today().weekday()],
+            'date_year':  datetime.datetime.today().year,
+            'day_month_num':  datetime.datetime.today().month,
+            'day_month_name': calendar.month_name[datetime.datetime.today().month],
+            'date_now_full': datetime.datetime.now(),
+            'current_time': datetime.datetime.now().time()
+            }

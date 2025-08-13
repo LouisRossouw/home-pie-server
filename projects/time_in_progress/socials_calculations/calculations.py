@@ -5,21 +5,6 @@ import shared.utils.utils as utils
 data_path = os.getenv('DATA_DIR')
 
 
-def get_all_accounts(platform):
-    """" Returns all tracked social media accounts """
-
-    data_dir = os.path.join(data_path, platform)
-    accounts = os.listdir(data_dir)
-    accounts_List = []
-
-    for account in accounts:
-        account_path = os.path.join(data_dir, account)
-        if account != ".gitignore":
-            accounts_List.append(account)
-
-    return accounts_List
-
-
 def get_graph_data(account, set_range, set_length, platform):
     """ Returns the accounts historic data """
 
@@ -27,6 +12,9 @@ def get_graph_data(account, set_range, set_length, platform):
 
     data_dir = os.path.join(data_path, platform)
     account_data_dir = os.path.join(data_dir, account)
+
+    if not os.path.exists(account_data_dir):
+        return {'account': account}, {}  # data, clean
 
     data_range = filter_range(set_range, set_length)
     data_list = get_account_data_list(account_data_dir)
@@ -93,6 +81,7 @@ def get_graph_data(account, set_range, set_length, platform):
 
                 if growth < 80:
                     if value_data not in no_duplicates_list:
+
                         no_duplicates_list.append(value_data)
 
                         # Append when posted a new post.

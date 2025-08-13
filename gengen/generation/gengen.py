@@ -12,18 +12,19 @@ load_dotenv()
 data_path = os.path.dirname(os.getenv('DATA_DIR'))
 
 run_dir = os.path.join(data_path, "run")
-data_dir = os.path.join(data_path, "generate", "output",
-                        "time.in.progress", "instagram")
+data_dir = os.path.join(data_path, "generate", "output", "time.in.progress", "instagram")  # nopep8
 build_dir = os.path.join(data_path, "generate", "img", "build")
-generated_data_dir = os.path.join(
-    data_path, "data", "general", "generated", "instagram")
+generated_data_dir = os.path.join(data_path, "data", "general", "generated", "instagram")  # nopep8
 
 
 def run_gengen():
     """ Runs the gengen .bat file """
 
     bat_file = os.path.join(run_dir, "run_generate_absolute_path.bat")
+    print('====')
+    print(run_dir)
 
+    print(os.listdir(run_dir))
     try:
         subprocess.Popen([bat_file])
         print("Batch file executed successfully.")
@@ -36,7 +37,7 @@ def run_gengen():
 def check_gengen():
     """ Polls the gengen directory for progress. """
 
-    DATES = utils.get_dates_new()
+    DATES = utils.get_dates()
     date_now = DATES["date_now"]
 
     file_output_dir = os.path.join(data_dir, str(date_now))
@@ -50,7 +51,7 @@ def check_gengen():
     generated_file_scaled = f"{file_output_dir}/TimeInProgress_simple_bars_audio.mp4"
 
     if os.path.exists(generated_data_file):
-        if os.path.exists(generated_file):
+        if len(os.listdir(file_output_dir)) > 0:
 
             print("Generation complete")
 
