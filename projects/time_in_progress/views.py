@@ -3,71 +3,85 @@ import datetime
 
 from rest_framework import status
 from rest_framework.response import Response
-from .decorators import decorator_overview
 
 import shared.utils.utils as utils
+
 from shared.utils.printouts.printout_general import printout
 
-from .socials_calculations import calculations
+from .decorators import decorator_overview, decorator_platform_data
+from .socials_calculations.calculations import get_graph_data
+from .service import add_historical_data
+
 
 F = str(__name__)
-OD = {'file': F, "func": "overview_data"}
+O = {'file': F, "func": "overview"}
+PD = {'file': F, "func": "platform_data"}
 
 
 @decorator_overview
 def overview(request):
-    """ Returns current data. """
+    """ Returns current data & historical data for time in progress on all platforms. """
+
+    printout(O)
 
     if request.method == "GET":
         start_time = utils.start_time()
 
-        account = request.GET.get('account') or "time.in.progress"
         range = request.GET.get('range') or "hour"
-        interval = request.GET.get('interval') or 1
+        interval = int(request.GET.get('interval') or 1)
+        account = request.GET.get('account') or "time.in.progress"
 
-        insta_data, insta_clean = calculations.get_graph_data(
-            str(account), str(range), int(interval), 'instagram')
+        instagram = get_graph_data(account, range, interval, 'instagram')
+        twitter = get_graph_data(account, range, interval, 'x-twitter')
+        youtube = get_graph_data(account, range, interval, 'youtube')
+        bluesky = get_graph_data(account, range, interval, 'bluesky')
+        tiktok = get_graph_data(account, range, interval, 'tiktok')
 
-        youtube_data, youtube_clean = calculations.get_graph_data(
-            str(account), str(range), int(interval), 'youtube')
-
-        twitter_data, twitter_clean = calculations.get_graph_data(
-            str(account), str(range), int(interval), 'x-twitter')
-
-        tiktok_data, tiktok_clean = calculations.get_graph_data(
-            str(account), str(range), int(interval), 'tiktok')
-
-        bluesky_data, bluesky_clean = calculations.get_graph_data(
-            str(account), str(range), int(interval), 'bluesky')
-
-        printout(OD)
         elapsed_time = utils.calculate_DB_time(start_time)
 
         context = {
             'ok': True,
-            'datetime': datetime.datetime.now(),
+            'tiktok': tiktok,
+            'youtube': youtube,
+            'bluesky': bluesky,
+            'twitter': twitter,
+            'instagram': instagram,
             'db_elapsed_time': elapsed_time,
-            'instagram': {
-                'data': insta_data,
-                'history': insta_clean
-            },
-            'youtube': {
-                'data': youtube_data,
-                'history': youtube_clean
-            },
-            'twitter': {
-                'data': twitter_data,
-                'history': twitter_clean
-            },
-            'tiktok': {
-                'data': tiktok_data,
-                'history': tiktok_clean
-            },
-            'bluesky': {
-                'data': bluesky_data,
-                'history': bluesky_clean
-            }
+            'datetime': datetime.datetime.now(),
         }
 
         return Response(context, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@decorator_platform_data
+def platform_data(request, platform):
+    """ Allows user to add historical data, *Needed for TikTok """
+
+    printout(PD)
+
+    if request.method == "POST":
+        start_time = utils.start_time()
+
+        # Instagram & Bluesky & X-Twitter
+        followers = request.data.get('followers')
+        following = request.data.get('following')
+        # posts = request.GET.get('posts')
+
+        # # TikTok
+        likes = request.data.get('likes')
+
+        # # YouTube
+        # views = request.GET.get('views')
+        # videos = request.GET.get('videos')
+        # subscribers = request.GET.get('subscribers')
+
+        # Temp; Only allow tiktok for now.
+        if platform == 'tiktok':
+            success = add_historical_data(
+                platform, followers, following, likes)
+
+            utils.calculate_DB_time(start_time)
+            return Response({"ok": success}, status=status.HTTP_200_OK)
+
     return Response(status=status.HTTP_400_BAD_REQUEST)

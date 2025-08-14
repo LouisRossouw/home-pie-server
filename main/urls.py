@@ -13,6 +13,8 @@ from projects.time_in_progress import views as timeInProgress
 
 router = DefaultRouter()
 
+# noqa
+
 urlpatterns = [
     # ** Admin
     #  path('', main.home_view, name='home'),
@@ -32,6 +34,7 @@ urlpatterns = [
     # ** Projects
     # - TimeInProgress
     path('api/time-in-progress/overview', timeInProgress.overview),
+    path('api/time-in-progress/<str:platform>/data', timeInProgress.platform_data),  # nopep8
 
     # - InstaInsights
     path('api/insta-insights/overview', instaInsights.overview),

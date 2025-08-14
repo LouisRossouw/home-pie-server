@@ -14,7 +14,7 @@ def get_graph_data(account, set_range, set_length, platform):
     account_data_dir = os.path.join(data_dir, account)
 
     if not os.path.exists(account_data_dir):
-        return {'account': account}, {}  # data, clean
+        return {"data": {'account': account}, "historical": {}}  # data, clean
 
     data_range = filter_range(set_range, set_length)
     data_list = get_account_data_list(account_data_dir)
@@ -105,7 +105,6 @@ def get_graph_data(account, set_range, set_length, platform):
     prev_time = collection[0]
 
     for t in prev_time:
-
         name = prev_time[t]["name"]
         past_post_value = int(prev_time[t]["stats"][post_key])
         past_followers_value = int(prev_time[t]["stats"][followers_key])
@@ -139,9 +138,14 @@ def get_graph_data(account, set_range, set_length, platform):
             "average_per_1_day": round(average_per_10_min * 24, 2),
             "average_per_1_week": round(average_per_10_min * (24 * 7), 2),
             "average_per_1_month": round(average_per_10_min * (24 * 30), 2),
+
+            "platform": platform
         }
 
-    return data, clean
+    return {
+        "data": data,
+        "historical": clean
+    }
 
 
 def get_keys(platform):
@@ -232,27 +236,27 @@ def go_back_time(time, range, interval):
     """ Return a date based on the range and interval """
 
     if range == "minute":
-        search_from = time - timedelta(minutes=interval)
+        f = time - timedelta(minutes=interval)
 
     if range == "hour":
-        search_from = time - timedelta(hours=interval)
+        f = time - timedelta(hours=interval)
 
     if range == "day":
-        search_from = time - timedelta(days=interval)
+        f = time - timedelta(days=interval)
 
     if range == "week":
-        search_from = time - timedelta(weeks=interval)
+        f = time - timedelta(weeks=interval)
 
     if range == "month":
-        search_from = time - timedelta(days=interval)
+        f = time - timedelta(days=interval)
 
     if range == "year":
-        search_from = time - timedelta(days=interval)
+        f = time - timedelta(days=interval)
 
     if range == "custom":
         print("TODO; if range == 'custom':")
 
-    return search_from
+    return f
 
 
 def get_files_from_range(data_list, account_data_dir, data_range):

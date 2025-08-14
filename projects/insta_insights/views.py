@@ -3,6 +3,7 @@ import json
 import datetime
 
 import shared.utils.utils as utils
+from shared.utils.printouts.printout_general import printout
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -13,11 +14,23 @@ from .decorators import decorator_accounts, decorator_account_detail, decorator_
 from .service import remove_account_from_config, get_all_accounts_from_dir, add_account_to_config
 
 
+F = str(__name__)
+A = {'file': F, "func": "accounts"}
+AD = {'file': F, "func": "account_detail"}
+O = {'file': F, "func": "overview"}
+
+
 @decorator_accounts
 def accounts(request):
+
+    printout(A)
+    start_time = utils.start_time()
+
     if request.method == 'GET':
+
         data = get_all_accounts_from_dir()
 
+        utils.calculate_DB_time(start_time)
         return Response({'ok': True, 'data': data})
 
     if request.method == 'POST':
@@ -26,6 +39,7 @@ def accounts(request):
 
         add_account_to_config(account_name, active)
 
+        utils.calculate_DB_time(start_time)
         return Response({'ok': True}, status=status.HTTP_201_CREATED)
 
     return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -34,24 +48,32 @@ def accounts(request):
 @decorator_account_detail
 def account_detail(request, account_name):
 
+    printout(AD)
+    start_time = utils.start_time()
+
     if request.method == 'GET':
 
         account = request.GET.get('account') or "time.in.progress"
         platform = request.GET.get('platform') or 'instagram'
-        range = request.GET.get('range') or "hour"
         interval = int(request.GET.get('interval') or 1)
+        range = request.GET.get('range') or "hour"
 
-        data, historicData = get_graph_data(account, range, interval, platform)
+        data = get_graph_data(account, range, interval, platform)
 
-        return Response({'ok': True, 'data': data, "history": historicData}, status=status.HTTP_200_OK)
+        utils.calculate_DB_time(start_time)
+        return Response({'ok': True, **data}, status=status.HTTP_200_OK)
 
     if request.method == 'PATCH':
         active = request.data.get('active')
         add_account_to_config(account_name, active)
+
+        utils.calculate_DB_time(start_time)
         return Response({'ok': True}, status=status.HTTP_200_OK)
 
     if request.method == 'DELETE':
         remove_account_from_config(account_name)
+
+        utils.calculate_DB_time(start_time)
         return Response({'ok': True}, status=status.HTTP_200_OK)
 
     return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -59,7 +81,9 @@ def account_detail(request, account_name):
 
 @decorator_overview
 def overview(request):
-    """ Returns current data. """
+    """ Returns current data & historical data for a tracked account. """
+
+    printout(O)
 
     if request.method == "GET":
         start_time = utils.start_time()
@@ -71,22 +95,23 @@ def overview(request):
         range = request.GET.get('range') or "hour"
 
         data_list = []
-        history_list = []
+        historical_list = []
 
         for account in accounts:
-            data, historic = get_graph_data(account, range, interval, platform)
+            data = get_graph_data(account, range, interval, platform)
 
-            data_list.append(data)
-            history_list.append(historic)
+            data_list.append(data["data"])
+            historical_list.append(data["historical"])
 
         elapsed_time = utils.calculate_DB_time(start_time)
 
-        context = {'ok': True,
-                   'datetime': datetime.datetime.now(),
-                   'db_elapsed_time': elapsed_time,
-                   'current_data': data_list,
-                   'historic_data': history_list
-                   }
+        context = {
+            'ok': True,
+            'datetime': datetime.datetime.now(),
+            'db_elapsed_time': elapsed_time,
+            'data': data_list,
+            'historical': historical_list
+        }
 
         return Response(context, status=status.HTTP_200_OK)
     return Response(status=status.HTTP_400_BAD_REQUEST)

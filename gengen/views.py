@@ -17,10 +17,11 @@ CGP = {'file': F, "func": "check_genGen_progress"}
 def start_gengen(request):
     """ Starts the content generation process for time in progress. """
 
-    if request.method == "POST":
-        start_time = utils.start_time()
+    printout(SG)
+    start_time = utils.start_time()
 
-        printout(SG)
+    if request.method == "POST":
+
         hasStarted = gengen.run_gengen()
 
         utils.calculate_DB_time(start_time)
@@ -32,10 +33,12 @@ def start_gengen(request):
 def check_progress(request):
     """ Returns the current progress of the time in progress content generation. """
 
-    if request.method == "GET":
+    printout(CGP)
 
-        printout(CGP)
+    if request.method == "GET":
         progress = gengen.check_gengen()
+
+        # TODO; Calculate percentage for the client progressbar.
 
         return Response({'ok': True, "progress": progress}, status=status.HTTP_200_OK)
     return Response(status=status.HTTP_400_BAD_REQUEST)
