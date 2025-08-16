@@ -1,11 +1,11 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 import shared.utils.utils as utils
 
 data_path = os.getenv('DATA_DIR')
 
 
-def get_graph_data(account, set_range, set_length, platform):
+def get_graph_data(account, range, interval, platform):
     """ Returns the accounts historic data """
 
     post_key, followers_key = get_keys(platform)
@@ -16,9 +16,7 @@ def get_graph_data(account, set_range, set_length, platform):
     if not os.path.exists(account_data_dir):
         return {"data": {'account': account}, "historical": {}}  # data, clean
 
-    data_range = filter_range(set_range, set_length)
-    data_list = get_account_data_list(account_data_dir)
-    chosen_data = get_files_from_range(data_list, account_data_dir, data_range)
+    chosen_data = utils.get_data(range, interval, account_data_dir)
 
     follower_count = []
     collection = []
@@ -38,7 +36,7 @@ def get_graph_data(account, set_range, set_length, platform):
         post_value = int(value["stats"][post_key])
         followers_value = int(value["stats"][followers_key])
 
-        start_time = go_back_time(time, set_range, set_length)
+        start_time = utils.go_back_time(time, range, interval)
         time_difference = time - start_time
 
     # Get the the latest data.
@@ -73,7 +71,7 @@ def get_graph_data(account, set_range, set_length, platform):
                 collection.append({prev: prev_value})
                 follower_count.append(past_followers_value)
 
-                value_data = maybe_append(date, set_range,  set_length)
+                value_data = maybe_append(date, range,  interval)
 
                 percent = (int(prev_data) / int(past_followers_value)) * 100
                 prev_data = past_followers_value
@@ -177,120 +175,6 @@ def get_keys(platform):
     return post_key, followers_key
 
 
-def get_account_data_list(account_path):
-    """ Returns and sorts paths to all data from the accounts data directory """
-
-    sorted_list = None
-    if os.path.isdir(account_path):
-        data_list = os.listdir(account_path)
-
-        # Sort based on the integer part before the underscore
-        sorted_list = sorted(data_list, key=lambda x: int(x.split('_')[0]))
-
-    return sorted_list
-
-
-def filter_range(range, interval):
-    """ Returns all the data for specific month if exists. """
-
-    search_from = ""
-    search_to = current_datetime = datetime.now()
-
-    if range == "minute":
-        search_from = current_datetime - timedelta(minutes=interval)
-
-    if range == "hour":
-        search_from = current_datetime - timedelta(hours=interval)
-
-    if range == "day":
-        search_from = current_datetime - timedelta(days=interval)
-
-    if range == "week":
-        search_from = current_datetime - timedelta(weeks=interval)
-
-    if range == "month":
-        search_from = current_datetime - timedelta(days=interval)
-
-    if range == "year":
-        search_from = current_datetime - timedelta(days=interval)
-
-    if range == "custom":
-        print("TODO; if range == 'custom':")
-
-    day_number = f"{search_from.day:02}"
-    month_name = search_from.strftime("%B")
-    year_number = search_from.strftime("%Y")
-
-    data = {
-        "month_name": month_name,
-        "day_number": day_number,
-        "year_number": year_number,
-        "search_from": search_from,
-        "search_to": search_to
-    }
-
-    return data
-
-
-def go_back_time(time, range, interval):
-    """ Return a date based on the range and interval """
-
-    if range == "minute":
-        f = time - timedelta(minutes=interval)
-
-    if range == "hour":
-        f = time - timedelta(hours=interval)
-
-    if range == "day":
-        f = time - timedelta(days=interval)
-
-    if range == "week":
-        f = time - timedelta(weeks=interval)
-
-    if range == "month":
-        f = time - timedelta(days=interval)
-
-    if range == "year":
-        f = time - timedelta(days=interval)
-
-    if range == "custom":
-        print("TODO; if range == 'custom':")
-
-    return f
-
-
-def get_files_from_range(data_list, account_data_dir, data_range):
-
-    chosen_index = len(data_list)
-    data_length = len(data_list)
-
-    for data in data_list:
-        file_name = data.split('.')[0]
-        index, year, month = file_name.split('_')
-
-        if data_range["month_name"] == month:
-            if data_range["year_number"] == year:
-                file = os.path.join(account_data_dir, data)
-
-                if os.path.exists(file):
-                    chosen_index = int(index)
-
-    chosen_data = []
-
-    if chosen_index != data_length:
-        for i in range(chosen_index, data_length + 1):
-            chosen_data.append(os.path.join(
-                account_data_dir, data_list[i - 1]))
-
-    if chosen_index == data_length:
-        chosen_data.append(os.path.join(account_data_dir, data_list[-1]))
-
-    if not chosen_data:
-        chosen_data.append(os.path.join(account_data_dir, data_list[-1]))
-
-    return chosen_data
-
-
 def calculate_average_difference(list_of_values):
 
     # Calculate the differences between consecutive numbers
@@ -309,6 +193,7 @@ def calculate_average_difference(list_of_values):
     return round(average_difference, 2)
 
 
+# TODO; What is the point of this again? need to fix it.
 def maybe_append(date, range, interval):
 
     append_value = date
