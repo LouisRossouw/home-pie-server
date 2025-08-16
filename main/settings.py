@@ -11,9 +11,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DEV = True if os.getenv('APP_ENV') == "dev" else False
 DEBUG = True if DEV else False
 
-# ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS')
-ALLOWED_HOSTS = ["10.0.0.107", "10.0.0.113", "127.0.0.1"]
-
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS').split(",")
 
 # Application definition
 INSTALLED_APPS = [
