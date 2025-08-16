@@ -7,9 +7,11 @@ from django.shortcuts import redirect
 from rest_framework.routers import DefaultRouter
 from user.views import CustomUserCreate, CustomTokenView
 
-from gengen import views as gengen
-from projects.insta_insights import views as instaInsights
-from projects.time_in_progress import views as timeInProgress
+from gengen import views as gen_gen
+from projects.insta_insights import views as insta_insights
+from projects.time_in_progress import views as time_in_progress
+
+from mr_ping_ping import views as ping_ping
 
 router = DefaultRouter()
 
@@ -20,31 +22,45 @@ urlpatterns = [
     #  path('', main.home_view, name='home'),
     path('', lambda request: redirect('admin/')),
     path('admin/', admin.site.urls),
+    # ** ----
 
     # ** Server / API
     path('api/stats', main.stats, name='stats'),
     path('api/health', main.health, name='health'),
     path('api/test', main.test_view, name='test'),
+    # ** ----
 
     # ** User Management: Manual signup + Oauth with google
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
     path('api/sign-up', CustomUserCreate.as_view(), name='user-create'),
     path('auth/login-manual', CustomTokenView.as_view(), name='login-manual'),
+    # ** ----
 
     # ** Projects
     # - TimeInProgress
-    path('api/time-in-progress/overview', timeInProgress.overview),
-    path('api/time-in-progress/<str:platform>/data', timeInProgress.platform_data),  # nopep8
+    path('api/time-in-progress/overview', time_in_progress.overview),
+    path('api/time-in-progress/<str:platform>/data', time_in_progress.platform_data),  # nopep8
 
     # - InstaInsights
-    path('api/insta-insights/overview', instaInsights.overview),
-    path('api/insta-insights/accounts', instaInsights.accounts),
-    path('api/insta-insights/accounts/<str:account_name>', instaInsights.account_detail),  # nopep8
-
+    path('api/insta-insights/overview', insta_insights.overview),
+    path('api/insta-insights/accounts', insta_insights.accounts),
+    path('api/insta-insights/accounts/<str:account_name>', insta_insights.account_detail),  # nopep8
+    # ** ----
 
     # ** GenGen
     # - TimeInProgress
-    path('api/gengen/start', gengen.start_gengen),
-    path('api/gengen/check-progress', gengen.check_progress),  # nopep8
+    path('api/gengen/start', gen_gen.start_gengen),
+    path('api/gengen/check-progress', gen_gen.check_progress),  # nopep8
+    # ** ----
 
+    # ** Mr-Ping-ing
+    path('api/mr-ping-ping/config', ping_ping.pingping_config),
+    path('api/mr-ping-ping/status', ping_ping.pingping_status),
+
+    # path('api/mr-ping-ping/apps', ping_ping.app_config),
+    path('api/mr-ping-ping/apps/configs', ping_ping.apps_config),
+    path('api/mr-ping-ping/apps/configs/<str:app_name>', ping_ping.app_config),
+    path('api/mr-ping-ping/apps/status', ping_ping.apps_status),
+    path('api/mr-ping-ping/apps/status/<str:app_name>', ping_ping.app_status),
+    # ** ----
 ]
