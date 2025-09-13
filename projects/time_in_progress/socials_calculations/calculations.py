@@ -71,7 +71,7 @@ def get_graph_data(account, range, interval, platform):
                 collection.append({prev: prev_value})
                 follower_count.append(past_followers_value)
 
-                value_data = maybe_append(date, range,  interval)
+                value_data = utils.maybe_append(date, range,  interval)
 
                 percent = (int(prev_data) / int(past_followers_value)) * 100
                 prev_data = past_followers_value
@@ -191,35 +191,6 @@ def calculate_average_difference(list_of_values):
         average_difference = 0
 
     return round(average_difference, 2)
-
-
-# TODO; What is the point of this again? need to fix it.
-def maybe_append(date, range, interval):
-
-    append_value = date
-
-    try:
-        datetime_object = datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
-    except Exception:
-        datetime_object = datetime.strptime(
-            date + ' 23:59:00.976309', "%Y-%m-%d %H:%M:%S.%f")
-
-    if range == "hours" and interval > 6:
-        value = datetime_object.hour
-        day = datetime_object.day
-        append_value = str(day) + '_' + str(value)
-
-    if range == "days":
-        if interval > 1:
-            day = datetime_object.day
-            month = datetime_object.month
-            append_value = str(month) + '_' + str(day)
-        if interval == 1:
-            value = datetime_object.hour
-            day = datetime_object.day
-            append_value = str(day) + '_' + str(value)
-
-    return append_value
 
 
 if __name__ == "__main__":

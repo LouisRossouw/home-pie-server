@@ -1,5 +1,7 @@
 import os
+from datetime import datetime
 import shared.utils.utils as utils
+
 
 mrpingping_dir = os.getenv('MRPINGPING_DIR')
 data_dir = os.path.join(mrpingping_dir, 'data')
@@ -78,3 +80,53 @@ def get_app_status(app_slug):
     _, info = list(_data.items())[-1]
 
     return info
+
+
+def get_app_recorded_data(app_slug, range, interval):
+    """ Returns the relevant data for a given range and interval """
+
+    data_dir = os.path.join(pings_data_dir, app_slug)
+
+    if not os.path.exists(data_dir):
+        return None
+
+    data = utils.get_data(range, interval, data_dir)
+
+    for d in data:
+        _data = utils.read_json(d)
+        for key, value in _data.items():
+            try:
+                time = datetime.strptime(key, "%Y-%m-%d %H:%M:%S.%f")
+            except Exception:
+                time = datetime.strptime(key, "%Y-%m-%d")
+
+        start_time = utils.go_back_time(time, range, interval)
+        test = utils.go_forward_in_time(time, range, 2)
+
+    clean = []
+    no_duplicates_list = []
+
+    for d in data:
+        _data = utils.read_json(d)
+
+        for date, value in _data.items():
+            try:
+                time = datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
+            except Exception:
+                time = datetime.strptime(date, "%Y-%m-%d")
+
+            # TODO; Add two hours
+
+            if start_time <= time:
+
+                value_data = utils.maybe_append(date, range,  interval)
+
+                if value_data not in no_duplicates_list:
+                    no_duplicates_list.append(value_data)
+
+                    clean.append({
+                        'date': date,
+                        'endpoints_res': value.get('endpoints_res')
+                    })
+
+    return clean
