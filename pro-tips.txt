@@ -1,0 +1,11 @@
+
+Current desktop app (Electron) Auth flow:
+- Desktop app; click login
+- Desktop app calls api to generate a loginKey
+- Users system browser opens with the loginKey in the params
+- Users logs in or creates an account
+- On success the API accociates and links the user to the loginKey
+- The user is redirected to a dashboard, authorization of the desktop app continues
+- If user clicks the auth/launch app button in web client, a deeplink will open the desktop app (Electron)
+- The desktop app will call the API with the saved loginKey
+- On success the API will return existing access tokens and delete the loginKey on the sever
