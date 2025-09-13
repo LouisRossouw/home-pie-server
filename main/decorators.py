@@ -3,7 +3,8 @@ from functools import wraps
 # from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-
+from drf_spectacular.utils import extend_schema
+from . import serializers
 
 def decorator_admin_stats(view_func):
     """Custom decorator to combine multiple DRF decorators."""
@@ -19,6 +20,12 @@ def decorator_admin_stats(view_func):
 
 def decorator_stats(view_func):
     """Custom decorator to combine multiple DRF decorators."""
+    @extend_schema(
+        tags=["system"],
+        summary="Stats Check",
+        description="Returns the current stats of the API.",
+        responses={200: serializers.StatsSerializer},
+    )
     @api_view(['GET'])
     @permission_classes([AllowAny])
     @authentication_classes([])  # Need this for anonymous users

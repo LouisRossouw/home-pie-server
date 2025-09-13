@@ -13,6 +13,13 @@ from projects.time_in_progress import views as time_in_progress
 
 from mr_ping_ping import views as ping_ping
 
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
+
+
 router = DefaultRouter()
 
 # noqa
@@ -23,6 +30,11 @@ urlpatterns = [
     path('', lambda request: redirect('admin/')),
     path('admin/', admin.site.urls),
     # ** ----
+
+    # schema & Swagger & Redoc
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/docs/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui",),  # nopep8
+    path("api/docs/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc",),  # nopep8
 
     # ** Server / API
     path('api/stats', main.stats, name='stats'),
@@ -62,5 +74,7 @@ urlpatterns = [
     path('api/mr-ping-ping/apps/configs/<str:app_name>', ping_ping.app_config),
     path('api/mr-ping-ping/apps/status', ping_ping.apps_status),
     path('api/mr-ping-ping/apps/status/<str:app_name>', ping_ping.app_status),
+    path('api/mr-ping-ping/apps/data/<str:app_name>', ping_ping.app_recorded_data),  # nopep8
     # ** ----
+
 ]
