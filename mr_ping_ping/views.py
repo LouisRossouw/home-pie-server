@@ -15,6 +15,7 @@ AC = {'file': F, "func": "app_config"}
 ASC = {'file': F, "func": "apps_config"}
 ASS = {'file': F, "func": "apps_status"}
 AS = {'file': F, "func": "app_status"}
+ARD = {'file': F, "func": "app_recorded_data"}
 
 
 @dec.decorator_pingping_config
@@ -23,6 +24,8 @@ def pingping_config(request):
 
     printout(PC)
     start_time = utils.start_time()
+
+    # TODO; POST, PUT, PATCH, config
 
     if request.method == "GET":
         date, res_time, last_pinged = service.get_ping_ping_data('hour', 1)
@@ -70,6 +73,8 @@ def app_config(request, app_name):
     printout(AC)
     start_time = utils.start_time()
 
+    # TODO; POST, PUT, PATCH, config
+
     if request.method == "GET":
         maybe_app = service.get_app_config(app_name)
 
@@ -86,8 +91,10 @@ def app_config(request, app_name):
 def apps_config(request):
     """ Returns an apps status """
 
-    printout(AS)
+    printout(ASC)
     start_time = utils.start_time()
+
+    # TODO; POST, PUT, PATCH, config
 
     if request.method == "GET":
         configs = service.get_apps_config()
@@ -129,6 +136,31 @@ def app_status(request, app_name):
             return Response({"ok": False}, status=status.HTTP_400_BAD_REQUEST)
 
         data = {"appName": app_name, **app_status}
+
+        utils.calculate_DB_time(start_time)
+
+        return Response({"ok": True, "data": data}, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@dec.decorator_app_recorded_data
+def app_recorded_data(request, app_name):
+    """ Returns an apps recorded data """
+
+    printout(ARD)
+    start_time = utils.start_time()
+
+    range = request.GET.get('range') or "hour"
+    interval = int(request.GET.get('interval') or 1)
+
+    if request.method == "GET":
+
+        app_status = service.get_app_recorded_data(app_name, range, interval)
+
+        if not app_status:
+            return Response({"ok": False}, status=status.HTTP_400_BAD_REQUEST)
+
+        data = {"appName": app_name, "app_status": app_status}
 
         utils.calculate_DB_time(start_time)
 
