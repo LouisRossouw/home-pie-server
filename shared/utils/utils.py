@@ -127,6 +127,33 @@ def go_back_time(time, range, interval):
     return f
 
 
+def go_forward_in_time(time, range, interval):
+    """ Return a date based on the range and interval """
+
+    if range == "minute":
+        f = time + timedelta(minutes=interval)
+
+    if range == "hour":
+        f = time + timedelta(hours=interval)
+
+    if range == "day":
+        f = time + timedelta(days=interval)
+
+    if range == "week":
+        f = time + timedelta(weeks=interval)
+
+    if range == "month":
+        f = time + timedelta(days=interval)
+
+    if range == "year":
+        f = time + timedelta(days=interval)
+
+    if range == "custom":
+        print("TODO; if range == 'custom':")
+
+    return f
+
+
 def sort_data_paths(data_dir_path):
     """ Sorts and returns paths to the data. """
 
@@ -182,3 +209,32 @@ def get_data(range, interval, data_dir):
     data = get_files_from_range(data_list, data_dir, search_range)
 
     return data
+
+
+# TODO; What is the point of this again? need to fix it.
+def maybe_append(date, range, interval):
+
+    append_value = date
+
+    try:
+        datetime_object = datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
+    except Exception:
+        datetime_object = datetime.strptime(
+            date + ' 23:59:00.976309', "%Y-%m-%d %H:%M:%S.%f")
+
+    if range == "hours" and interval > 6:
+        value = datetime_object.hour
+        day = datetime_object.day
+        append_value = str(day) + '_' + str(value)
+
+    if range == "days":
+        if interval > 1:
+            day = datetime_object.day
+            month = datetime_object.month
+            append_value = str(month) + '_' + str(day)
+        if interval == 1:
+            value = datetime_object.hour
+            day = datetime_object.day
+            append_value = str(day) + '_' + str(value)
+
+    return append_value
