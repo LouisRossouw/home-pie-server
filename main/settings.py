@@ -24,6 +24,9 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
+    'drf_spectacular',  # generates the schema
+    'drf_spectacular_sidecar',  # nopep8 # bundles Swagger UI & Redoc.
+
     # drf-social-oauth2
     'oauth2_provider',
     'social_django',
@@ -128,6 +131,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.AdminRenderer',
@@ -199,6 +203,33 @@ else:
 # just print statements in color or not, should actually change this to logger!
 PRINTOUTS = True if DEV else False
 PRINTOUTS_FRM = 'RED'
+
+# Open api
+SPECTACULAR_SETTINGS = {
+    "TITLE": "HomePie API",
+    "DESCRIPTION": "API documentation",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SCHEMA_PATH_PREFIX": r"/api/v1",
+
+    "SECURITY": [{"BearerAuth": []}],  # TODO; Why does this not work
+    "COMPONENTS": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            }
+        }
+    },
+
+    # "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+    # "SERVE_AUTHENTICATION": [
+    #     "rest_framework.authentication.BasicAuthentication"
+    # ],
+}
 
 
 print("--")
