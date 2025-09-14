@@ -5,48 +5,48 @@ from rest_framework.permissions import BasePermission
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(required=True)
-    username = serializers.CharField(required=True)
-    password = serializers.CharField(min_length=8, write_only=True)
-    first_name = serializers.CharField(required=True)
-    last_name = serializers.CharField(required=False, allow_blank=True)
-    auth_type = serializers.CharField(required=False, allow_blank=True)
-
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'password',
-                  'first_name', 'last_name', 'auth_type')
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        instance = self.Meta.model(**validated_data)
-        if password is not None:
-            instance.set_password(password)
-        instance.save()
-        return instance
+        fields = (
+            'id',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'auth_type',
+            'is_staff',
+        )
 
 
 class CustomTokenSerializer(serializers.ModelSerializer):
-    """ Used when a user logs in manually """
-
-    user = serializers.SerializerMethodField()
+    user = CustomUserSerializer(read_only=True)
 
     class Meta:
         model = AccessToken
         fields = ('expires', 'scope', 'user')
 
-    def get_user(self, obj):
-        user_data = obj.user
-        return {
-            'id': user_data.id,
-            'email': user_data.email,
-            'username': user_data.username,
-            'first_name': user_data.first_name,
-            'last_name': user_data.last_name,
-            'auth_type': user_data.auth_type,
-            'is_staff': user_data.is_staff
-        }
+
+class CustomTokenRequestSerializer(serializers.Serializer):
+    username = serializers.CharField(required=False)
+    password = serializers.CharField(required=False)
+    client_id = serializers.CharField(required=False)
+    auth_type = serializers.CharField(required=False)
+    grant_type = serializers.CharField()
+
+
+class CustomTokenResponseSerializer(CustomTokenSerializer):
+    access_token = serializers.CharField()
+    refresh_token = serializers.CharField()
+    token_type = serializers.CharField()
+    expires_in = serializers.IntegerField()
+
+    class Meta(CustomTokenSerializer.Meta):
+        fields = CustomTokenSerializer.Meta.fields + (
+            'access_token',
+            'refresh_token',
+            'token_type',
+            'expires_in',
+        )
 
 
 class IsSuperUser(BasePermission):
@@ -54,3 +54,24 @@ class IsSuperUser(BasePermission):
 
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated and request.user.is_superuser
+
+
+class CreateLoginKeySerializer(serializers.Serializer):
+    login_key = serializers.CharField()
+
+
+class CompleteLoginKeySerializer(serializers.Serializer):
+    status = serializers.ChoiceField(
+        choices=["complete", "invalid", "expired"],
+        help_text="Status of the login key process"
+    )
+
+
+class PollLoginKeyTokenSerializer(serializers.Serializer):
+    access_token = serializers.CharField()
+    refresh_token = serializers.CharField()
+    application = serializers.CharField()
+    user = CustomTokenSerializer()
+    expires_in = serializers.IntegerField()
+    expires = serializers.DateTimeField()
+    scope = serializers.CharField()

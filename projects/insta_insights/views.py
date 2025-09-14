@@ -34,8 +34,8 @@ def accounts(request):
         return Response({'ok': True, 'data': data})
 
     if request.method == 'POST':
-        account_name = request.data.get('account')
-        active = request.data.get('active', True)
+        account_name = request.GET.get('account')
+        active = request.GET.get('active', True)
 
         add_account_to_config(account_name, active)
 
@@ -64,7 +64,7 @@ def account_detail(request, account_name):
         return Response({'ok': True, **data}, status=status.HTTP_200_OK)
 
     if request.method == 'PATCH':
-        active = request.data.get('active')
+        active = request.GET.get('active')
         add_account_to_config(account_name, active)
 
         utils.calculate_DB_time(start_time)
@@ -88,8 +88,7 @@ def overview(request):
     if request.method == "GET":
         start_time = utils.start_time()
 
-        accounts = json.loads(request.GET.get('accounts') or [])
-
+        accounts = request.GET.getlist("accounts")
         platform = request.GET.get('platform') or 'instagram'
         interval = int(request.GET.get('interval') or 12)
         range = request.GET.get('range') or "hour"

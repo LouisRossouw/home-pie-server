@@ -5,7 +5,7 @@ from django.urls import path, include
 import main.views as main
 from django.shortcuts import redirect
 from rest_framework.routers import DefaultRouter
-from user.views import CustomUserCreate, CustomTokenView
+from user.views import CustomUserCreate, CustomTokenView, CreateLoginView, CompleteLoginWithKeyView, PollLoginKeyView
 
 from gengen import views as gen_gen
 from projects.insta_insights import views as insta_insights
@@ -33,8 +33,8 @@ urlpatterns = [
 
     # schema & Swagger & Redoc
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/docs/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui",),  # nopep8
     path("api/docs/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc",),  # nopep8
+    path("api/docs/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui",),  # nopep8
 
     # ** Server / API
     path('api/stats', main.stats, name='stats'),
@@ -46,6 +46,11 @@ urlpatterns = [
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
     path('api/sign-up', CustomUserCreate.as_view(), name='user-create'),
     path('auth/login-manual', CustomTokenView.as_view(), name='login-manual'),
+
+    # Electron Desktop app.
+    path('auth/login-key', CreateLoginView.as_view(), name='login-key'),
+    path("auth/login-key/<uuid:key>", PollLoginKeyView.as_view(), name="login-key-poll"),  # nopep8
+    path("auth/login-key/complete", CompleteLoginWithKeyView.as_view(), name="login-complete"),  # nopep8
     # ** ----
 
     # ** Projects

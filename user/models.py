@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.utils import timezone
+from django.utils.timezone import now, timedelta
 from django.utils.translation import gettext_lazy as lazy
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, Group, Permission
 
@@ -73,8 +74,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150, unique=True)
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
-    uuid = models.UUIDField(
-        default=uuid.uuid4, editable=True, unique=True, blank=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=True, unique=True, blank=True)  # nopep8
     auth_type = models.CharField(max_length=150, blank=True)
     start_date = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)
@@ -104,3 +104,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+
+
+def default_expiry():
+    return now() + timedelta(minutes=5)
+
+
+class LoginKey(models.Model):
+    key = models.UUIDField(default=uuid.uuid4, unique=True, db_index=True)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)  # nopep8
+    created_at = models.DateTimeField(auto_now=True)
+    expires_at = models.DateTimeField(default=default_expiry)  # nopep8 - 5 min expiry
+
+    def __str__(self):
+        return f"{self.user} | {self.expires_at}"
+
+    def is_expired(self):
+        return now() > self.expires_at
