@@ -64,12 +64,12 @@ def platform_data(request, platform):
         start_time = utils.start_time()
 
         # Instagram & Bluesky & X-Twitter
-        followers = request.data.get('followers')
-        following = request.data.get('following')
+        followers = request.GET.get('followers')
+        following = request.GET.get('following')
         # posts = request.GET.get('posts')
 
         # # TikTok
-        likes = request.data.get('likes')
+        likes = request.GET.get('likes')
 
         # # YouTube
         # views = request.GET.get('views')
